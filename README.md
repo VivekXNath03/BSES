@@ -75,6 +75,38 @@ A product search and filter application for real-time product searching.
 
 ---
 
+### 4. 🖼️ Infinite Scroll Gallery
+A performant infinite scroll image gallery using the Intersection Observer API - the modern, industry-standard approach for detecting element visibility.
+
+**Features:**
+- Infinite scroll loading of images
+- Lazy loading for performance optimization
+- Beautiful masonry-style grid layout
+- Lightbox for full-size image viewing
+- Real-time stats showing observer triggers
+- Smooth animations and transitions
+- Responsive design for all devices
+- Loading spinner while fetching images
+
+**Topics Learned:**
+- 📌 **Intersection Observer API** - Modern alternative to scroll events for visibility detection
+- 📌 **Observer Pattern** - Using callbacks triggered by browser when elements intersect
+- 📌 **Sentinel Element** - Placing a "trigger" element that signals when to load more content
+- 📌 **Root Margin & Threshold** - Configuring when the observer fires (200px before visible, 10% visibility)
+- 📌 **Lazy Loading** - Loading content only when needed, improving initial page load
+- 📌 **Async/Await** - Modern JavaScript for handling asynchronous operations
+- 📌 **Document Fragment** - Batch DOM insertions for better performance
+- 📌 **State Management** - Tracking loading state, page count, and preventing duplicate requests
+- 📌 **Performance Optimization** - Why Intersection Observer is better than `scroll` events:
+  - Runs on compositor thread (doesn't block main thread)
+  - No need for throttle/debounce
+  - Browser-optimized callbacks
+  - Better battery life on mobile
+- 📌 **Lightbox Implementation** - Modal overlay for viewing full-size images
+- 📌 **Keyboard Events** - ESC key to close lightbox for accessibility
+
+---
+
 ## 🛠️ Technologies Used
 
 | Technology | Purpose |
@@ -100,6 +132,10 @@ A product search and filter application for real-time product searching.
 ✅ Conditional Rendering
 ✅ Real-time Search Implementation
 ✅ State Management (Cart, Wishlist)
+✅ Intersection Observer API
+✅ Lazy Loading & Infinite Scroll
+✅ Async/Await & Promises
+✅ Performance Optimization Techniques
 ```
 
 ---
@@ -118,6 +154,8 @@ A product search and filter application for real-time product searching.
    cd BSES/javascript/calculator
    # or
    cd BSES/javascript/ProductFilter
+   # or
+   cd BSES/javascript/IntersectionObserver
    ```
 
 3. **Open `index.html` in your browser**
@@ -136,6 +174,10 @@ BSES/
     │   ├── style.css
     │   └── app.js
     ├── eCom/
+    │   ├── index.html
+    │   ├── style.css
+    │   └── app.js
+    ├── IntersectionObserver/
     │   ├── index.html
     │   ├── style.css
     │   └── app.js

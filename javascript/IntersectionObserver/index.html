@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Scroll Gallery</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>🖼️ Infinite Scroll Gallery</h1>
+        <p>Using Intersection Observer API for optimal performance</p>
+    </header>
+
+    <main class="gallery-container">
+        <div class="gallery" id="gallery">
+            <!-- Images will be dynamically loaded here -->
+        </div>
+        
+        <!-- Sentinel element - Intersection Observer watches this -->
+        <div class="sentinel" id="sentinel">
+            <div class="loader">
+                <div class="spinner"></div>
+                <p>Loading more images...</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="stats" id="stats">
+        <span>Images loaded: <strong id="imageCount">0</strong></span>
+        <span>Observer triggers: <strong id="triggerCount">0</strong></span>
+    </div>
+
+    <!-- Lightbox for viewing images -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightboxClose">&times;</button>
+        <img src="" alt="Full size image" id="lightboxImg">
+        <p class="lightbox-caption" id="lightboxCaption"></p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
