@@ -1,0 +1,91 @@
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font: 1em sans-serif;
+}
+
+body{
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+    background: rgb(240 , 239, 243); 
+}
+
+
+.container{
+    width: 375px;
+    height: 520px;
+    box-shadow: 4px 4px 30px rgba(0,0,0,0.2);
+    padding: 20px;
+    background: #fff;
+    overflow-y:scroll ;
+}
+
+.container::-webkit-scrollbar{
+    display: none;
+}
+
+.container form{
+    width: 100%;
+    border: 1px solid rgb(82 , 74 , 235);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+}
+
+.container form input{
+    border: none;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
+    outline: none;
+    box-shadow: none;
+    padding: 10px;
+    padding-left: 40px;
+}
+
+.container form i{
+    position: absolute;
+    left: 12px;
+    color: #888;
+}
+
+.product-list{
+    padding:20px 0;
+} 
+
+
+.product{
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.product img{
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.product .p-details h2{
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.product .p-details h3{
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 8px;
+}
