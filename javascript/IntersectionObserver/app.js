@@ -1,246 +1,293 @@
-/**
- * Infinite Scroll Gallery using Intersection Observer API
- * 
- * Key Concepts Demonstrated:
- * 1. Intersection Observer API - Modern way to detect element visibility
- * 2. Lazy Loading - Load content only when needed
- * 3. Performance Optimization - No scroll event listeners
- * 4. Async/Await - Modern JavaScript for handling async operations
- * 5. DOM Manipulation - Creating and appending elements dynamically
- */
-
-// ============================================
-// Configuration
-// ============================================
 const CONFIG = {
-    imagesPerBatch: 12,      // Number of images to load per batch
-    maxImages: 100,          // Maximum total images (for demo purposes)
-    rootMargin: '200px',     // Start loading 200px before sentinel is visible
-    threshold: 0.1           // Trigger when 10% of sentinel is visible
+    rootMargin: '50px',
+    threshold: 0.1,
+    animationThreshold: 0.2,
+    staggerDelay: 100
 };
 
-// ============================================
-// State Management
-// ============================================
-const state = {
-    currentPage: 1,
-    isLoading: false,
-    totalLoaded: 0,
-    triggerCount: 0,
-    hasMore: true
+const stats = {
+    imagesLoaded: 0,
+    totalImages: 0
 };
 
-// ============================================
-// DOM Elements
-// ============================================
-const gallery = document.getElementById('gallery');
-const sentinel = document.getElementById('sentinel');
-const imageCountEl = document.getElementById('imageCount');
-const triggerCountEl = document.getElementById('triggerCount');
-const lightbox = document.getElementById('lightbox');
-const lightboxImg = document.getElementById('lightboxImg');
-const lightboxCaption = document.getElementById('lightboxCaption');
-const lightboxClose = document.getElementById('lightboxClose');
+function updateStatsDisplay() {
+    document.getElementById('imagesLoaded').textContent = stats.imagesLoaded;
+    document.getElementById('totalImages').textContent = stats.totalImages;
+}
 
-// ============================================
-// Intersection Observer Setup
-// ============================================
+function initImageLazyLoad() {
+    const lazyImages = document.querySelectorAll('.lazy-image');
+    stats.totalImages = lazyImages.length;
+    updateStatsDisplay();
 
-/**
- * The Intersection Observer watches the sentinel element.
- * When the sentinel becomes visible (user scrolled near the bottom),
- * it triggers loading more images.
- * 
- * Benefits over scroll event:
- * - Doesn't fire on every scroll pixel
- * - Browser optimizes the callback execution
- * - No need for throttling/debouncing
- * - Works with CSS transforms and iframes
- */
-const observerOptions = {
-    root: null,              // Use viewport as root
-    rootMargin: CONFIG.rootMargin,  // Extend the intersection area
-    threshold: CONFIG.threshold     // Trigger at this visibility percentage
-};
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    const src = img.dataset.src;
 
-const intersectionObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        // isIntersecting is true when the sentinel enters the viewport
-        if (entry.isIntersecting && !state.isLoading && state.hasMore) {
-            console.log('🎯 Observer triggered! Loading more images...');
-            state.triggerCount++;
-            updateStats();
-            loadMoreImages();
+                    if (src) {
+                        img.src = src;
+
+                        img.onload = () => {
+                            img.classList.add('loaded');
+                            stats.imagesLoaded++;
+                            updateStatsDisplay();
+                        };
+
+                        img.onerror = () => {
+                            img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="200"%3E%3Crect fill="%23ccc" width="300" height="200"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%23666"%3EError%3C/text%3E%3C/svg%3E';
+                            img.classList.add('loaded');
+                        };
+
+                        delete img.dataset.src;
+                    }
+
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: CONFIG.rootMargin,
+            threshold: CONFIG.threshold
+        });
+
+        lazyImages.forEach(img => {
+            imageObserver.observe(img);
+        });
+    } else {
+        lazyImages.forEach(img => {
+            img.src = img.dataset.src;
+            img.classList.add('loaded');
+        });
+        stats.imagesLoaded = stats.totalImages;
+        updateStatsDisplay();
+    }
+}
+
+function initVideoLazyLoad() {
+    const lazyVideos = document.querySelectorAll('.lazy-video');
+
+    if ('IntersectionObserver' in window) {
+        const videoObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const video = entry.target;
+                    const src = video.dataset.src;
+
+                    if (src) {
+                        video.src = src;
+                        video.classList.add('loaded');
+
+                        const placeholder = video.parentElement.querySelector('.video-placeholder');
+                        if (placeholder) {
+                            placeholder.classList.add('hidden');
+                        }
+
+                        delete video.dataset.src;
+                    }
+
+                    observer.unobserve(video);
+                }
+            });
+        }, {
+            rootMargin: '100px',
+            threshold: 0.25
+        });
+
+        lazyVideos.forEach(video => {
+            videoObserver.observe(video);
+        });
+    }
+}
+
+function initBackgroundLazyLoad() {
+    const lazyBackgrounds = document.querySelectorAll('.lazy-bg');
+
+    if ('IntersectionObserver' in window) {
+        const bgObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const element = entry.target;
+                    const bgUrl = element.dataset.bg;
+
+                    if (bgUrl) {
+                        const img = new Image();
+                        img.onload = () => {
+                            element.style.backgroundImage = `url(${bgUrl})`;
+                            element.classList.add('loaded');
+                        };
+                        img.src = bgUrl;
+
+                        delete element.dataset.bg;
+                    }
+
+                    observer.unobserve(element);
+                }
+            });
+        }, {
+            rootMargin: '200px',
+            threshold: 0
+        });
+
+        lazyBackgrounds.forEach(bg => {
+            bgObserver.observe(bg);
+        });
+    }
+}
+
+function initScrollAnimations() {
+    const animatedElements = document.querySelectorAll(
+        '.fade-in-section, .slide-in-left, .slide-in-right, .slide-in-up'
+    );
+
+    if ('IntersectionObserver' in window) {
+        const animationObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            rootMargin: '0px',
+            threshold: CONFIG.animationThreshold
+        });
+
+        animatedElements.forEach(el => {
+            animationObserver.observe(el);
+        });
+    } else {
+        animatedElements.forEach(el => el.classList.add('visible'));
+    }
+}
+
+function initStaggerAnimations() {
+    const staggerContainers = document.querySelectorAll('.cards-grid');
+
+    if ('IntersectionObserver' in window) {
+        const staggerObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const container = entry.target;
+                    const items = container.querySelectorAll('.stagger-item');
+
+                    items.forEach((item, index) => {
+                        setTimeout(() => {
+                            item.classList.add('visible');
+                        }, index * CONFIG.staggerDelay);
+                    });
+
+                    observer.unobserve(container);
+                }
+            });
+        }, {
+            rootMargin: '0px',
+            threshold: 0.1
+        });
+
+        staggerContainers.forEach(container => {
+            staggerObserver.observe(container);
+        });
+    }
+}
+
+function animateNumber(element, target, duration = 2000) {
+    const start = 0;
+    const startTime = performance.now();
+
+    function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const current = Math.floor(start + (target - start) * easeOutQuart);
+
+        element.textContent = current;
+
+        if (progress < 1) {
+            requestAnimationFrame(update);
         }
+    }
+
+    requestAnimationFrame(update);
+}
+
+function initNumberCounters() {
+    const counters = document.querySelectorAll('.stat-number[data-target]');
+
+    if ('IntersectionObserver' in window) {
+        const counterObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = parseInt(counter.dataset.target, 10);
+
+                    animateNumber(counter, target);
+                    observer.unobserve(counter);
+                }
+            });
+        }, {
+            threshold: 0.5
+        });
+
+        counters.forEach(counter => {
+            counterObserver.observe(counter);
+        });
+    }
+}
+
+function demoMultipleThresholds() {
+    const element = document.querySelector('.parallax-section');
+
+    if (element && 'IntersectionObserver' in window) {
+        const thresholdObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const ratio = entry.intersectionRatio;
+                entry.target.style.setProperty('--visibility', ratio);
+            });
+        }, {
+            threshold: [0, 0.25, 0.5, 0.75, 1]
+        });
+
+        thresholdObserver.observe(element);
+    }
+}
+
+function isInViewport(element) {
+    return new Promise(resolve => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                resolve(entry.isIntersecting);
+                observer.disconnect();
+            });
+        });
+        observer.observe(element);
     });
-}, observerOptions);
-
-// Start observing the sentinel element
-intersectionObserver.observe(sentinel);
-
-// ============================================
-// Image Loading Functions
-// ============================================
-
-/**
- * Simulates fetching images from an API
- * In a real app, this would be an actual API call
- */
-async function fetchImages(page, count) {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    const images = [];
-    const startId = (page - 1) * count + 1;
-    
-    // Using Picsum for random beautiful images
-    for (let i = 0; i < count; i++) {
-        const id = startId + i;
-        if (state.totalLoaded + i >= CONFIG.maxImages) break;
-        
-        // Picsum provides random images with specific dimensions
-        const width = 400;
-        const height = 300 + Math.floor(Math.random() * 100); // Varying heights
-        
-        images.push({
-            id: id,
-            src: `https://picsum.photos/seed/${id}/${width}/${height}`,
-            fullSrc: `https://picsum.photos/seed/${id}/1200/800`,
-            title: `Photo #${id}`,
-            author: `Photographer ${Math.floor(Math.random() * 50) + 1}`
-        });
-    }
-    
-    return images;
 }
 
-/**
- * Creates an image card element
- */
-function createImageCard(imageData) {
-    const card = document.createElement('div');
-    card.className = 'image-card';
-    card.style.animationDelay = `${Math.random() * 0.3}s`;
-    
-    card.innerHTML = `
-        <img src="${imageData.src}" alt="${imageData.title}" loading="lazy">
-        <div class="image-info">
-            <h3>${imageData.title}</h3>
-            <p>by ${imageData.author}</p>
-        </div>
-    `;
-    
-    // Add click handler for lightbox
-    card.addEventListener('click', () => openLightbox(imageData));
-    
-    return card;
+function init() {
+    initImageLazyLoad();
+    initVideoLazyLoad();
+    initBackgroundLazyLoad();
+    initScrollAnimations();
+    initStaggerAnimations();
+    initNumberCounters();
+    demoMultipleThresholds();
 }
 
-/**
- * Loads more images and appends them to the gallery
- */
-async function loadMoreImages() {
-    if (state.isLoading || !state.hasMore) return;
-    
-    state.isLoading = true;
-    console.log(`📥 Loading page ${state.currentPage}...`);
-    
-    try {
-        const images = await fetchImages(state.currentPage, CONFIG.imagesPerBatch);
-        
-        if (images.length === 0) {
-            state.hasMore = false;
-            sentinel.classList.add('end-message');
-            intersectionObserver.unobserve(sentinel);
-            console.log('✅ All images loaded!');
-            return;
-        }
-        
-        // Create a document fragment for better performance
-        const fragment = document.createDocumentFragment();
-        
-        images.forEach(imageData => {
-            const card = createImageCard(imageData);
-            fragment.appendChild(card);
-        });
-        
-        gallery.appendChild(fragment);
-        
-        state.totalLoaded += images.length;
-        state.currentPage++;
-        updateStats();
-        
-        // Check if we've reached the limit
-        if (state.totalLoaded >= CONFIG.maxImages) {
-            state.hasMore = false;
-            sentinel.classList.add('end-message');
-            intersectionObserver.unobserve(sentinel);
-            console.log('✅ Maximum images reached!');
-        }
-        
-        console.log(`✅ Loaded ${images.length} images. Total: ${state.totalLoaded}`);
-        
-    } catch (error) {
-        console.error('❌ Error loading images:', error);
-    } finally {
-        state.isLoading = false;
-    }
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
 }
 
-// ============================================
-// Lightbox Functions
-// ============================================
-
-function openLightbox(imageData) {
-    lightboxImg.src = imageData.fullSrc;
-    lightboxCaption.textContent = `${imageData.title} by ${imageData.author}`;
-    lightbox.classList.add('active');
-    document.body.style.overflow = 'hidden';
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        initImageLazyLoad,
+        initVideoLazyLoad,
+        initBackgroundLazyLoad,
+        initScrollAnimations,
+        isInViewport
+    };
 }
-
-function closeLightbox() {
-    lightbox.classList.remove('active');
-    document.body.style.overflow = '';
-}
-
-// Lightbox event listeners
-lightboxClose.addEventListener('click', closeLightbox);
-lightbox.addEventListener('click', (e) => {
-    if (e.target === lightbox) closeLightbox();
-});
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeLightbox();
-});
-
-// ============================================
-// UI Updates
-// ============================================
-
-function updateStats() {
-    imageCountEl.textContent = state.totalLoaded;
-    triggerCountEl.textContent = state.triggerCount;
-}
-
-// ============================================
-// Initialize
-// ============================================
-
-// Load initial batch of images
-loadMoreImages();
-
-console.log(`
-🚀 Infinite Scroll Gallery Initialized!
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📌 Using Intersection Observer API
-📌 Root Margin: ${CONFIG.rootMargin}
-📌 Threshold: ${CONFIG.threshold}
-📌 Images per batch: ${CONFIG.imagesPerBatch}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-💡 Why Intersection Observer is better than scroll events:
-   1. Browser-optimized - runs on compositor thread
-   2. No need for throttle/debounce
-   3. Automatically handles resize, zoom, iframe scenarios
-   4. Clean callback-based API
-   5. Better battery life on mobile devices
-`);

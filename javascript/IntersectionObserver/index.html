@@ -3,40 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infinite Scroll Gallery</title>
+    <title>Lazy Loading with Intersection Observer</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    
     <header class="header">
-        <h1>🖼️ Infinite Scroll Gallery</h1>
-        <p>Using Intersection Observer API for optimal performance</p>
+        <div class="container">
+            <h1 class="logo"> LazyLoad Pro</h1>
+            <p class="tagline">Advanced Lazy Loading with Intersection Observer API</p>
+        </div>
     </header>
 
-    <main class="gallery-container">
-        <div class="gallery" id="gallery">
-            <!-- Images will be dynamically loaded here -->
-        </div>
-        
-        <!-- Sentinel element - Intersection Observer watches this -->
-        <div class="sentinel" id="sentinel">
-            <div class="loader">
-                <div class="spinner"></div>
-                <p>Loading more images...</p>
+    
+    <section class="hero">
+        <div class="container">
+            <h2>Scroll Down to See the Magic</h2>
+            <p>Images, videos, and content load only when they enter the viewport</p>
+            <div class="scroll-indicator">
+                <span>↓</span>
             </div>
         </div>
-    </main>
+    </section>
 
-    <div class="stats" id="stats">
-        <span>Images loaded: <strong id="imageCount">0</strong></span>
-        <span>Observer triggers: <strong id="triggerCount">0</strong></span>
+   
+    <section class="stats-section fade-in-section">
+        <div class="container">
+            <h2 class="section-title">Performance Benefits</h2>
+            <div class="stats-grid">
+                <div class="stat-card slide-in-left">
+                    <div class="stat-number" data-target="70">0</div>
+                    <div class="stat-label">% Faster Load</div>
+                </div>
+                <div class="stat-card slide-in-up">
+                    <div class="stat-number" data-target="50">0</div>
+                    <div class="stat-label">% Less Bandwidth</div>
+                </div>
+                <div class="stat-card slide-in-right">
+                    <div class="stat-number" data-target="90">0</div>
+                    <div class="stat-label">% Better UX</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   
+    <section class="gallery-section">
+        <div class="container">
+            <h2 class="section-title fade-in-section">Lazy Loaded Image Gallery</h2>
+            <p class="section-desc fade-in-section">Images load as you scroll - check the Network tab!</p>
+            
+            <div class="gallery-grid">
+              
+                <div class="gallery-item">
+                    <img 
+                        class="lazy-image" 
+                        data-src="https://picsum.photos/400/300?random=1"
+                        alt="Gallery Image 1"
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23ddd' width='400' height='300'/%3E%3C/svg%3E"
+                    >
+                    <div class="image-overlay">
+                        <span>Image 1</span>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img 
+                        class="lazy-image" 
+                        data-src="https://picsum.photos/400/300?random=2"
+                        alt="Gallery Image 2"
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23ddd' width='400' height='300'/%3E%3C/svg%3E"
+                    >
+                    <div class="image-overlay">
+                        <span>Image 2</span>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img 
+                        class="lazy-image" 
+                        data-src="https://picsum.photos/400/300?random=3"
+                        alt="Gallery Image 3"
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23ddd' width='400' height='300'/%3E%3C/svg%3E"
+                    >
+                    <div class="image-overlay">
+                        <span>Image 3</span>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img 
+                        class="lazy-image" 
+                        data-src="https://picsum.photos/400/300?random=4"
+                        alt="Gallery Image 4"
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23ddd' width='400' height='300'/%3E%3C/svg%3E"
+                    >
+                    <div class="image-overlay">
+                        <span>Image 4</span>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img 
+                        class="lazy-image" 
+                        data-src="https://picsum.photos/400/300?random=5"
+                        alt="Gallery Image 5"
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23ddd' width='400' height='300'/%3E%3C/svg%3E"
+                    >
+                    <div class="image-overlay">
+                        <span>Image 5</span>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img 
+                        class="lazy-image" 
+                        data-src="https://picsum.photos/400/300?random=6"
+                        alt="Gallery Image 6"
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23ddd' width='400' height='300'/%3E%3C/svg%3E"
+                    >
+                    <div class="image-overlay">
+                        <span>Image 6</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <section class="video-section fade-in-section">
+        <div class="container">
+            <h2 class="section-title">Lazy Loaded Video</h2>
+            <p class="section-desc">Video loads only when visible in viewport</p>
+            
+            <div class="video-container">
+                <iframe 
+                    class="lazy-video"
+                    data-src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                    title="Lazy Loaded Video"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                ></iframe>
+                <div class="video-placeholder">
+                    <div class="play-button">▶</div>
+                    <p>Video will load when visible</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <section class="cards-section">
+        <div class="container">
+            <h2 class="section-title fade-in-section">Feature Cards</h2>
+            
+            <div class="cards-grid">
+                <div class="feature-card stagger-item">
+                    <div class="card-icon">⚡</div>
+                    <h3>Lightning Fast</h3>
+                    <p>Only load resources when needed, dramatically improving initial page load time.</p>
+                </div>
+                
+                <div class="feature-card stagger-item">
+                    <div class="card-icon">📱</div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Saves bandwidth on mobile devices by loading images progressively.</p>
+                </div>
+                
+                <div class="feature-card stagger-item">
+                    <div class="card-icon">🎯</div>
+                    <h3>Precise Control</h3>
+                    <p>Configure rootMargin and threshold for exact trigger points.</p>
+                </div>
+                
+                <div class="feature-card stagger-item">
+                    <div class="card-icon">🔋</div>
+                    <h3>Battery Efficient</h3>
+                    <p>No scroll event listeners means less CPU usage and better battery life.</p>
+                </div>
+                
+                <div class="feature-card stagger-item">
+                    <div class="card-icon">🎨</div>
+                    <h3>Smooth Animations</h3>
+                    <p>Trigger CSS animations when elements enter the viewport.</p>
+                </div>
+                
+                <div class="feature-card stagger-item">
+                    <div class="card-icon">♻️</div>
+                    <h3>Auto Cleanup</h3>
+                    <p>Automatically unobserve elements after they've been loaded.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   
+    <section class="parallax-section lazy-bg" data-bg="https://picsum.photos/1920/1080?random=10">
+        <div class="parallax-content">
+            <h2>Lazy Loaded Background Image</h2>
+            <p>Even CSS background images can be lazy loaded!</p>
+        </div>
+    </section>
+
+  
+    <section class="gallery-section">
+        <div class="container">
+            <h2 class="section-title fade-in-section">More Images</h2>
+            
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img 
+                        class="lazy-image" 
+                        data-src="https://picsum.photos/400/300?random=7"
+                        alt="Gallery Image 7"
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23ddd' width='400' height='300'/%3E%3C/svg%3E"
+                    >
+                    <div class="image-overlay">
+                        <span>Image 7</span>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img 
+                        class="lazy-image" 
+                        data-src="https://picsum.photos/400/300?random=8"
+                        alt="Gallery Image 8"
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23ddd' width='400' height='300'/%3E%3C/svg%3E"
+                    >
+                    <div class="image-overlay">
+                        <span>Image 8</span>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img 
+                        class="lazy-image" 
+                        data-src="https://picsum.photos/400/300?random=9"
+                        alt="Gallery Image 9"
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23ddd' width='400' height='300'/%3E%3C/svg%3E"
+                    >
+                    <div class="image-overlay">
+                        <span>Image 9</span>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img 
+                        class="lazy-image" 
+                        data-src="https://picsum.photos/400/300?random=10"
+                        alt="Gallery Image 10"
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23ddd' width='400' height='300'/%3E%3C/svg%3E"
+                    >
+                    <div class="image-overlay">
+                        <span>Image 10</span>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img 
+                        class="lazy-image" 
+                        data-src="https://picsum.photos/400/300?random=11"
+                        alt="Gallery Image 11"
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23ddd' width='400' height='300'/%3E%3C/svg%3E"
+                    >
+                    <div class="image-overlay">
+                        <span>Image 11</span>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img 
+                        class="lazy-image" 
+                        data-src="https://picsum.photos/400/300?random=12"
+                        alt="Gallery Image 12"
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23ddd' width='400' height='300'/%3E%3C/svg%3E"
+                    >
+                    <div class="image-overlay">
+                        <span>Image 12</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   
+
+    
+    <div class="loading-stats">
+        <div class="stat">
+            <span class="stat-value" id="imagesLoaded">0</span>
+            <span class="stat-name">Images Loaded</span>
+        </div>
+        <div class="stat">
+            <span class="stat-value" id="totalImages">0</span>
+            <span class="stat-name">Total Images</span>
+        </div>
     </div>
 
-    <!-- Lightbox for viewing images -->
-    <div class="lightbox" id="lightbox">
-        <button class="lightbox-close" id="lightboxClose">&times;</button>
-        <img src="" alt="Full size image" id="lightboxImg">
-        <p class="lightbox-caption" id="lightboxCaption"></p>
-    </div>
+    
+    <footer class="footer">
+        <div class="container">
+            <p>🚀 Built with Intersection Observer API</p>
+            <p class="footer-note">Open DevTools → Network tab to see lazy loading in action!</p>
+        </div>
+    </footer>
 
     <script src="app.js"></script>
 </body>
